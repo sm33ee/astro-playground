@@ -1,0 +1,48 @@
+---
+import '../styles/global.css';
+
+const { title = 'Astro Project Foundation', description = 'Astro + Tailwind + React demo project.' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="min-h-screen bg-slate-950 text-slate-100">
+      <header class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6">
+        <a class="flex items-center gap-3 text-lg font-semibold text-white" href="/">
+          <span class="h-2.5 w-2.5 rounded-full bg-brand-500 shadow-lg shadow-brand-500/50"></span>
+          Astro Foundation
+        </a>
+        <nav class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <a class="hover:text-white" href="/questionnaire">Questionnaire</a>
+          <a class="hover:text-white" href="/api/hello">API Demo</a>
+          <a
+            class="btn-secondary"
+            href="https://astro.build"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Astro Docs
+          </a>
+        </nav>
+      </header>
+
+      <main class="mx-auto w-full max-w-6xl px-6 pb-16">
+        <slot />
+      </main>
+
+      <footer class="mx-auto w-full max-w-6xl px-6 pb-10 text-xs text-slate-500">
+        <p>Built with Astro, Tailwind CSS, and React.</p>
+      </footer>
+    </div>
+  </body>
+</html>

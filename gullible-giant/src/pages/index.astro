@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ReactCounter from '../components/ReactCounter';
+---
+
+<BaseLayout
+  title="Astro Project Foundation"
+  description="Astro starter with Tailwind, React, testing, and tooling."
+>
+  <section class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+    <div>
+      <p class="text-sm uppercase tracking-[0.2em] text-brand-200">Launch-ready stack</p>
+      <h1 class="mt-4 text-4xl font-display sm:text-5xl">
+        Astro + Tailwind + React starter
+      </h1>
+      <p class="mt-4 max-w-xl text-base text-slate-300">
+        This project is wired for fast UI work: Tailwind tokens, React islands, API routes,
+        and modern testing tools. Extend the tokens in tailwind.config.ts to match your
+        design system.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a class="btn" href="/questionnaire">Try the questionnaire</a>
+        <a class="btn-secondary" href="/api/hello">Hit the API demo</a>
+      </div>
+      <div class="mt-8 grid gap-4 sm:grid-cols-3">
+        <div class="card">
+          <h2 class="text-lg font-semibold text-white">TypeScript first</h2>
+          <p class="mt-2 text-sm text-slate-300">
+            Strict typings for components, API routes, and tests.
+          </p>
+        </div>
+        <div class="card">
+          <h2 class="text-lg font-semibold text-white">Tailwind tokens</h2>
+          <p class="mt-2 text-sm text-slate-300">
+            Customize colors, spacing, and fonts in one config file.
+          </p>
+        </div>
+        <div class="card">
+          <h2 class="text-lg font-semibold text-white">Testing ready</h2>
+          <p class="mt-2 text-sm text-slate-300">
+            Jest for units, Playwright for end-to-end coverage.
+          </p>
+        </div>
+      </div>
+    </div>
+    <aside class="card">
+      <ReactCounter client:load initial={3} />
+    </aside>
+  </section>
+
+  <section class="mt-12">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="text-xl font-display text-white">Quick start checklist</h2>
+      <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
+        Ready to ship
+      </span>
+    </div>
+    <ul class="mt-4 grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
+      <li class="card">Run <code class="text-brand-200">npm run dev</code> to start local dev.</li>
+      <li class="card">Update <code class="text-brand-200">tailwind.config.ts</code> with new tokens.</li>
+      <li class="card">Check <code class="text-brand-200">/api/hello</code> for API routing.</li>
+      <li class="card">Use <code class="text-brand-200">npm run test</code> to run Jest.</li>
+    </ul>
+  </section>
+</BaseLayout>

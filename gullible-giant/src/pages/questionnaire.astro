@@ -1,0 +1,240 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const questions = [
+  {
+    id: 'goal',
+    label: 'Project goal',
+    prompt: 'What are you building first?',
+    options: ['Landing page', 'Marketing site', 'Product dashboard', 'Docs hub']
+  },
+  {
+    id: 'tone',
+    label: 'Brand tone',
+    prompt: 'Which tone fits the product?',
+    options: ['Calm and minimal', 'Bold and energetic', 'Warm and friendly', 'Technical and precise']
+  },
+  {
+    id: 'timeline',
+    label: 'Launch timeline',
+    prompt: 'When do you want to ship?',
+    options: ['This week', 'This month', 'Next quarter', 'Just exploring']
+  }
+];
+---
+
+<BaseLayout
+  title="Animated Questionnaire"
+  description="Astro page with a native animated questionnaire flow."
+>
+  <section class="card">
+    <p class="text-sm uppercase tracking-[0.2em] text-brand-200">Native Astro animation</p>
+    <h1 class="mt-3 text-3xl font-display text-white">Animated questionnaire</h1>
+    <p class="mt-3 max-w-2xl text-sm text-slate-300">
+      Click an option to save your answer. The next question slides in using a CSS animation
+      managed directly in this Astro page.
+    </p>
+  </section>
+
+  <section class="card mt-8">
+    <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
+      <p data-status>Question 1 of {questions.length}</p>
+      <button
+        class="text-xs uppercase tracking-[0.2em] text-slate-400 transition hover:text-white"
+        type="button"
+        data-restart
+      >
+        Restart
+      </button>
+    </div>
+
+    <div class="question-stack mt-6">
+      {questions.map((question, index) => (
+        <article
+          class={`question-card ${index === 0 ? 'is-active' : ''}`}
+          data-step={index}
+          data-question={question.id}
+          data-label={question.label}
+          aria-hidden={index === 0 ? 'false' : 'true'}
+        >
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">
+            Question {index + 1}
+          </p>
+          <h2 class="mt-2 text-2xl font-display text-white">{question.prompt}</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            {question.options.map((option) => (
+              <button
+                class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
+                type="button"
+                data-answer={option}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </article>
+      ))}
+
+      <article
+        class="question-card"
+        data-step={questions.length}
+        data-question="summary"
+        aria-hidden="true"
+      >
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Summary</p>
+        <h2 class="mt-2 text-2xl font-display text-white">All set!</h2>
+        <p class="mt-2 text-sm text-slate-300">
+          Your selections are stored in session storage. Review them below or restart the flow.
+        </p>
+        <ul class="mt-4 space-y-3 text-sm" data-summary></ul>
+      </article>
+    </div>
+  </section>
+
+  <style>
+    .question-stack {
+      display: grid;
+      min-height: 18rem;
+    }
+
+    .question-card {
+      grid-area: 1 / 1;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(1.25rem);
+      transition: opacity 280ms ease, transform 280ms ease;
+    }
+
+    .question-card.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .question-card.is-leaving {
+      opacity: 0;
+      transform: translateX(-1.25rem);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .question-card {
+        transition: none;
+        transform: none;
+      }
+    }
+  </style>
+
+  <script>
+    const steps = Array.from(document.querySelectorAll('[data-step]'));
+    const status = document.querySelector('[data-status]');
+    const summaryList = document.querySelector('[data-summary]');
+    const restartButton = document.querySelector('[data-restart]');
+    const storageKey = 'astro-questionnaire-answers';
+    const answers = JSON.parse(sessionStorage.getItem(storageKey) ?? '{}');
+    const summaryIndex = steps.length - 1;
+
+    const questionSteps = steps.slice(0, summaryIndex);
+    const labels = new Map(
+      questionSteps.map((step) => [step.dataset.question ?? '', step.dataset.label ?? ''])
+    );
+
+    let activeIndex = 0;
+
+    const findFirstUnanswered = () => {
+      const index = questionSteps.findIndex((step) => {
+        const key = step.dataset.question ?? '';
+        return !answers[key];
+      });
+      return index === -1 ? summaryIndex : index;
+    };
+
+    const updateStatus = () => {
+      if (!status) return;
+      if (activeIndex >= summaryIndex) {
+        status.textContent = 'Summary';
+        return;
+      }
+      status.textContent = `Question ${activeIndex + 1} of ${summaryIndex}`;
+    };
+
+    const updateSummary = () => {
+      if (!summaryList) return;
+      const items = questionSteps
+        .map((step) => {
+          const key = step.dataset.question ?? '';
+          const label = labels.get(key) || key;
+          const value = answers[key];
+          return value ? { label, value } : null;
+        })
+        .filter(Boolean);
+
+      summaryList.innerHTML =
+        items.length === 0
+          ? '<li class="text-slate-400">No answers saved yet.</li>'
+          : items
+              .map(
+                (item) =>
+                  `<li class="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                    <span class="text-slate-300">${item.label}</span>
+                    <span class="font-semibold text-white">${item.value}</span>
+                  </li>`
+              )
+              .join('');
+    };
+
+    const setActive = (nextIndex) => {
+      if (nextIndex === activeIndex) return;
+      const current = steps[activeIndex];
+      const next = steps[nextIndex];
+
+      current.classList.remove('is-active');
+      current.classList.add('is-leaving');
+      current.setAttribute('aria-hidden', 'true');
+      next.classList.add('is-active');
+      next.setAttribute('aria-hidden', 'false');
+
+      const handleTransition = () => {
+        current.classList.remove('is-leaving');
+      };
+      current.addEventListener('transitionend', handleTransition, { once: true });
+
+      activeIndex = nextIndex;
+      updateStatus();
+      updateSummary();
+    };
+
+    questionSteps.forEach((step, index) => {
+      step.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const button = target.closest('[data-answer]');
+        if (!button) return;
+
+        const answer = button.getAttribute('data-answer') ?? button.textContent?.trim() ?? '';
+        const questionId = step.dataset.question ?? `question-${index}`;
+
+        if (answer) {
+          answers[questionId] = answer;
+          sessionStorage.setItem(storageKey, JSON.stringify(answers));
+        }
+
+        setActive(Math.min(index + 1, summaryIndex));
+      });
+    });
+
+    restartButton?.addEventListener('click', () => {
+      sessionStorage.removeItem(storageKey);
+      Object.keys(answers).forEach((key) => delete answers[key]);
+      setActive(0);
+    });
+
+    activeIndex = findFirstUnanswered();
+    steps.forEach((step, index) => {
+      const isActive = index === activeIndex;
+      step.classList.toggle('is-active', isActive);
+      step.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    });
+    updateStatus();
+    updateSummary();
+  </script>
+</BaseLayout>
