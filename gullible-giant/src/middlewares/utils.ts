@@ -1,5 +1,6 @@
 import type { APIContext } from 'astro';
 
+const ROUTED_PATHS = new Set(['/favicon.ico', '/favicon.svg', '/robots.txt']);
 const STATIC_EXTENSIONS = new Set([
   'css',
   'js',
@@ -30,10 +31,10 @@ export const buildRewriteUrl = (context: APIContext, pathname: string) => {
 };
 
 export const shouldSkipRouting = (pathname: string) => {
+  if (ROUTED_PATHS.has(pathname)) return false;
   if (pathname.startsWith('/~')) return true;
   if (pathname.startsWith('/_astro') || pathname.startsWith('/_image')) return true;
-  if (pathname === '/favicon.ico' || pathname === '/favicon.svg') return true;
-  if (pathname === '/robots.txt' || pathname === '/sitemap.xml') return true;
+  if (pathname === '/sitemap.xml') return true;
 
   const lastSegment = pathname.split('/').pop() ?? '';
   if (!lastSegment.includes('.')) return false;
