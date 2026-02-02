@@ -16,6 +16,16 @@ const reactConfig = {
 };
 
 export default [
+  {
+    ignores: [
+      'dist/**',
+      '.astro/**',
+      'node_modules/**',
+      'playwright-report/**',
+      'test-results/**',
+      '*.min.js'
+    ]
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs['flat/recommended'],
