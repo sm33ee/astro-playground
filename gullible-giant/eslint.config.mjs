@@ -31,5 +31,18 @@ export default [
     files: reactFiles,
     ...reactHooks.configs.flat.recommended
   },
+  {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        exports: 'readonly'
+      }
+    }
+  },
   prettier
 ];
