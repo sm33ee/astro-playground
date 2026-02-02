@@ -1,10 +1,12 @@
-import { GET } from '../robots.txt';
 import type { APIContext } from 'astro';
+import { GET } from '../robots.txt';
 
 const createMockContext = (): Partial<APIContext> => ({
   url: new URL('http://localhost/robots.txt'),
   request: new Request('http://localhost/robots.txt'),
-  locals: {}
+  locals: {
+    currentDomain: 'testing.com'
+  }
 });
 
 describe('GET /robots.txt', () => {

@@ -1,10 +1,12 @@
-import { GET } from '../sitemap.xml';
 import type { APIContext } from 'astro';
+import { GET } from '../sitemap.xml';
 
 const createMockContext = (): Partial<APIContext> => ({
   url: new URL('http://localhost/sitemap.xml'),
   request: new Request('http://localhost/sitemap.xml'),
-  locals: {}
+  locals: {
+    currentDomain: 'testing.com'
+  }
 });
 
 describe('GET /sitemap.xml', () => {
@@ -40,7 +42,9 @@ describe('GET /sitemap.xml', () => {
     const context: Partial<APIContext> = {
       url: new URL('http://example.com/sitemap.xml'),
       request: new Request('http://example.com/sitemap.xml'),
-      locals: {}
+      locals: {
+        currentDomain: 'testing.com'
+      }
     };
 
     const response = await GET(context as APIContext);

@@ -1,11 +1,13 @@
+import type { APIContext } from 'astro';
 import { GET as getIco } from '../favicon.ico';
 import { GET as getSvg } from '../favicon.svg';
-import type { APIContext } from 'astro';
 
 const createMockContext = (pathname: string): Partial<APIContext> => ({
   url: new URL(`http://localhost${pathname}`),
   request: new Request(`http://localhost${pathname}`),
-  locals: {}
+  locals: {
+    currentDomain: 'testing.com'
+  }
 });
 
 describe('favicon endpoints', () => {

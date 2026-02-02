@@ -1,5 +1,5 @@
-import { GET } from '../hello';
 import type { APIContext } from 'astro';
+import { GET } from '../hello';
 
 const createMockContext = (searchParams: Record<string, string> = {}): Partial<APIContext> => {
   const url = new URL('http://localhost/api/hello');
@@ -10,7 +10,9 @@ const createMockContext = (searchParams: Record<string, string> = {}): Partial<A
   return {
     url,
     request: new Request(url.toString()),
-    locals: {}
+    locals: {
+      currentDomain: 'testing.com'
+    }
   };
 };
 
