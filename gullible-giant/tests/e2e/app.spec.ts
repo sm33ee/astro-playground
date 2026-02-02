@@ -17,7 +17,5 @@ test('questionnaire advances after a selection', async ({ page }) => {
 
   await page.getByRole('button', { name: /Landing page/i }).click();
 
-  await expect(
-    page.getByRole('heading', { name: /Which tone fits the product/i })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Which tone fits the product/i })).toBeVisible();
 });
