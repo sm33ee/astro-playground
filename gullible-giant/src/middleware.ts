@@ -1,9 +1,18 @@
 import { sequence } from 'astro:middleware';
-import { blockTildeAccessMiddleware } from './middlewares/blockTildeAccess';
-import { currentDomainMiddleware } from './middlewares/currentDomain';
-import { domainRoutingMiddleware } from './middlewares/domainRouting';
-import { healthCheckMiddleware } from './middlewares/healthCheck';
+import {
+  blockTildeAccessMiddleware,
+  currentDomainMiddleware,
+  domainRoutingMiddleware,
+  healthCheckMiddleware
+} from './middlewares';
 
+/**
+ * Middleware execution order:
+ * 1. currentDomainMiddleware - Sets the current domain in locals (supports dev simulation)
+ * 2. blockTildeAccessMiddleware - Blocks direct access to internal /~ routes
+ * 3. healthCheckMiddleware - Handles health check endpoints (/health, /status, /alive)
+ * 4. domainRoutingMiddleware - Routes requests to domain-specific or fallback pages
+ */
 export const onRequest = sequence(
   currentDomainMiddleware,
   blockTildeAccessMiddleware,
